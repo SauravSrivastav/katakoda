@@ -1,0 +1,37 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: mssql-deployment # Name of the Deployment
+spec:
+  replicas: 1 # Number of desired pods, Default is '1'
+  template: # describes the pods that will be created.
+    metadata: 
+      labels: # match selectors for replica and services.
+        app: mssql # name provided to the label and will be used by selector
+    spec: # Specification of the desired behavior of the pod.
+      terminationGracePeriodSeconds: 10 # pod will take 10sec before killing itself.Optional Processes running in pods before termination.
+      containers:
+      - name: mssql  # This is the container name.
+        image: microsoft/mssql-server-linux  # image used from docker hub.
+        ports: # List of ports to expose Containers.
+        - containerPort: 1433 #Number of port to expose on the pod's IP address
+        env: # Enviornment Variable 
+        - name: ACCEPT_EULA #Accept End User License Agreement (EULA) is a legal contract between a software application author or publisher and the user of that application
+          value: "Y" #Yes
+        - name: SA_PASSWORD #UserName=SA(SystemAdmin)
+          value: "Saurav@123" #Password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mssql-service #name of the service 
+spec:
+  selector: #Route service traffic to pods with label
+    app: mssql #name of the selector that will route svc to the pod(using label)
+  ports:
+    - protocol: TCP #The IP protocol for this port. Supports "TCP", "UDP", and "SCTP". Default is TCP.
+      port: 1433 #The port that will be exposed by this service
+      targetPort: 1433 #This should be same to the Container Port.(Line17)
+      nodePort: 30201 # This is port explicitly 
+  type: NodePort
+

@@ -1,0 +1,42 @@
+#This Deployment file is using env variable to connect to the db.(Line 22 to 24)
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: passcoe-deployment
+spec:
+  selector:
+    matchLabels:
+      app: passcoe
+  replicas: 1 # tells deployment to run 2 pods matching the template
+  template: 
+    metadata:
+      labels:
+        app: passcoe
+    spec:
+      containers:
+      - name: passcoe
+        image: sauravsrivastav/web:v1
+        ports:
+        - containerPort: 80
+        env:
+          - name: ConnectionStrings__EmployeesContext
+           # value: Server=mssql-service;Database=EmployeesDB;User=SA;Password=Saurav@123;
+            valueFrom:
+              configMapKeyRef:
+                name: mssql-connection-configmap
+                key: db-connection-string
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: passcoe-service
+spec:
+  selector:
+    app: passcoe
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+    nodePort: 30111 #30k-32767
+  type: NodePort

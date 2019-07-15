@@ -1,0 +1,17 @@
+connecting our web app(passcoe) to db.
+
+Step 1: go to passcoe project -> appsettings.json
+
+
+
+EmployeesContext": "Server=(localdb)\\mssqllocaldb;Database=EmployeesContext-1b825f2a-6e48-4f30-9074-47a6de866840;Trusted_Connection=True;MultipleActiveResultSets=true"
+
+Step 2: Using Env Variable in the passcoe-deployment2.yaml file
+-Spec for Container we will write a variable that will override the value of connection string.
+
+env:
+  - name: ConnectionStrings__EmployeesContext
+    value: Server=mssql-service;Database=EmployeesDB;User=SA;Password=Saurav@123;
+
+  #EmployeesContext is a child of another json object(ConnectionStrings)
+  #Server=mssql-service it hs been used from service section of deployment file.it will always take the newest ip address.

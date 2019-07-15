@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mssql-connection-configmap
+  labels:
+    app: paascoe #later we can use this in deploymnt of passcoe file of deployment
+data:
+  db-connection-string: Server=mssql-service;Database=EmployeesDB;User=SA;Password=Saurav@123;
+
+#Server=mssql-service is the name of the service in mssql.yaml file.
+#kubectl create configmap special-config --from-literal=key=values
